@@ -83,13 +83,10 @@
 	</script>
 	<script>
 		$(function () {
-			$(".productimage").imageZoom();
+			$(".productimage:not(.master)").imageZoom();
 			$(".master").imageZoom({
 				zoom: 1,
-				change: function (master) {
-					console.log(master)
-					$.fn.imageZoom.update($(".slave"), master);
-				}
+				target: ".slave"
 			});
 		})
 	</script>

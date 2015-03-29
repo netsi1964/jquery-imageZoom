@@ -9,7 +9,6 @@
 
 // UMD (Universal Module Definition) patterns for JavaScript modules that work everywhere.
 // https://github.com/umdjs/umd/blob/master/jqueryPluginCommonjs.js
-var t;
 (function (factory) {
 
 	if (typeof define === 'function' && define.amd) {
@@ -22,14 +21,14 @@ var t;
 
 }(function ($) {
 	$.fn.imageZoom = function (options) {
-		
-		$.fn.imageZoom.update = function (ele, data) {
-			ele.css({
+
+		$.fn.imageZoom.update = function (target, data) {
+			target.css({
 				"background-size": data.zoom * 100 + "%"
 			});
 			data.pX = -data.offsetX * (data.zoom - 1);
 			data.pY = -data.offsetY * (data.zoom - 1);
-			ele.css({
+			target.css({
 				"background-position": data.pX + "px " + data.pY + "px"
 			});
 		};
@@ -47,13 +46,15 @@ var t;
 					"min": 1,
 					"max": 10,
 					"clickZoomSpeed": 2,
-					"change": null
+					"change": null,
+					"target": null
 				};
 
 
 			me.ele = $(this);
 			me.id = (new Date() - new Date(1964, 8, 24, 23, 35));
 			me.settings = $.extend({}, defaults, options);
+
 			// initialise element
 			me.zoomElement = me.ele.find(".zoom:first");
 			if (me.zoomElement.length === 0) {
@@ -61,6 +62,7 @@ var t;
 				me.ele.prepend(me.slider);
 				me.zoomElement = $("input", me.ele);
 			};
+			me.settings.target = (me.settings.target !== null) ? $(me.settings.target) : me.ele;
 
 			// methods
 			me.imageInteraction = function (e) {
@@ -102,8 +104,7 @@ var t;
 			}
 
 			me.update = function () {
-				console.log(me.ele, me.settings)
-				$.fn.imageZoom.update(me.ele, me.settings);
+				$.fn.imageZoom.update(me.settings.target, me);
 				me.zoomElement.val(me.zoom);
 				if (typeof me.settings.change === "function") {
 					me.settings.change.call(me, me);
