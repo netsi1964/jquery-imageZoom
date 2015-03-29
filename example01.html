@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Image Zoom</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<style>
+		@import url(http://fonts.googleapis.com/css?family=Inconsolata:400,700|Open+Sans:400,800);
+		body {
+			font-family: 'Open Sans', sans-serif;
+		}
+		
+		.productimage {
+			text-align: center;
+			background: url(http://dl.dropboxusercontent.com/u/3260327/20120107_192556.jpg) no-repeat 0 0;
+			width: 233px;
+			height: 300px;
+			transition: background-size .05s ease-in-out;
+			box-shadow: 0 0 3px black;
+		}
+		
+		.productimage:hover {
+			background-position: 50% 50%;
+		}
+		
+		.lorempixel {
+			background-image: url(http://lorempixel.com/output/food-q-c-1920-1902-4.jpg);
+			width: 288px;
+			height: 285px;
+		}
+		
+		.log {
+			font-family: 'Inconsolata', monospace;
+		}
+		
+		.productimage input {
+			opacity: .5;
+			width: 95%;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="jumbotron">
+			<div class="container">
+				<h2>Hello, world!</h2>
+				<p>This pen xxx</p>
+				<div class="col-md-12 tags"><strong>Tags:</strong>
+					<span ng-repeat="tag in tags">
+            <a href="http://codepen.io/search?q={{tag}}&limit=all&depth=everything&show_forks=false"><code class="btn btn-primary btn-xs">{{tag}}</code></a></span>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<h2>Default settings</h2>
+					<div class="productimage"></div>
+				</div>
+				<div class="col-md-3">
+					<h2>Default settings</h2>
+					<div class="productimage lorempixel"></div>
+				</div>
+				<div class="col-md-3">
+					<h2>Master</h2>
+					<div class="productimage lorempixel master"></div>
+				</div>
+				<div class="col-md-3">
+					<h2>Slave</h2>
+					<div class="lorempixel slave"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="jquery.imageZoom.js">
+	</script>
+	<script>
+		$(function () {
+			$(".productimage").imageZoom();
+			$(".master").imageZoom({
+				zoom: 1,
+				zoomChanged: function (master) {
+					console.log(master)
+					$(".slave").css({
+						"background-size": me.zoom
+					});
+				}
+			});
+		})
+	</script>
+
+
+</body>
+
+</html>
