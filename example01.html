@@ -86,11 +86,9 @@
 			$(".productimage").imageZoom();
 			$(".master").imageZoom({
 				zoom: 1,
-				zoomChanged: function (master) {
+				change: function (master) {
 					console.log(master)
-					$(".slave").css({
-						"background-size": me.zoom
-					});
+					$.fn.imageZoom.update($(".slave"), master);
 				}
 			});
 		})

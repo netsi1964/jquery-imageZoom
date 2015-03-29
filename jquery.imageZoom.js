@@ -2,13 +2,14 @@
 /* jshint unused:false */
 /* jshint plusplus: false, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /* jshint laxbreak: true */
-/* global define, Zepto */
+/* global define */
 
 /*! Sten Hougaard, March 2015, @Netsi1964 */
 'use strict';
 
 // UMD (Universal Module Definition) patterns for JavaScript modules that work everywhere.
 // https://github.com/umdjs/umd/blob/master/jqueryPluginCommonjs.js
+var t;
 (function (factory) {
 
 	if (typeof define === 'function' && define.amd) {
@@ -16,16 +17,29 @@
 	} else if (typeof exports === 'object') {
 		module.exports = factory(require('jquery'));
 	} else {
-		factory(jQuery || Zepto);
+		factory(jQuery);
 	}
 
 }(function ($) {
-	$.fn.imageZoom = function (imageZoom, options) {
+	$.fn.imageZoom = function (options) {
+		
+		$.fn.imageZoom.update = function (ele, data) {
+			ele.css({
+				"background-size": data.zoom * 100 + "%"
+			});
+			data.pX = -data.offsetX * (data.zoom - 1);
+			data.pY = -data.offsetY * (data.zoom - 1);
+			ele.css({
+				"background-position": data.pX + "px " + data.pY + "px"
+			});
+		};
 
-		return this.each(function (options) {
+		return this.each(function () {
+
 			options = options || {};
-			console.log("called with " + options)
-				// settings
+
+
+			// settings
 			var me = {},
 				defaults = {
 					"zoom": 1,
@@ -33,14 +47,13 @@
 					"min": 1,
 					"max": 10,
 					"clickZoomSpeed": 2,
-					"zoomChanged": null
+					"change": null
 				};
+
+
 			me.ele = $(this);
 			me.id = (new Date() - new Date(1964, 8, 24, 23, 35));
 			me.settings = $.extend({}, defaults, options);
-
-			console.log(arguments, me.settings);
-
 			// initialise element
 			me.zoomElement = me.ele.find(".zoom:first");
 			if (me.zoomElement.length === 0) {
@@ -70,15 +83,8 @@
 					// We are called from a change on the zoom range
 					zoom = me.zoomElement.val();
 				};
-
 				me.zoom = (zoom <= me.settings.min) ? me.settings.min : (zoom >= me.settings.max) ? me.settings.max : zoom;
-
 				me.update();
-				console.log(me.settings.zoomChanged)
-				if (typeof me.settings.zoomChanged === "function") {
-					alert("zoomChanged")
-					me.settings.zoomChanged.call(me, me);
-				}
 			};
 
 			me.clickZoom = function (e) {
@@ -96,16 +102,16 @@
 			}
 
 			me.update = function () {
-				me.ele.css({
-					"background-size": me.zoom * 100 + "%"
-				});
-				me.pX = -me.offsetX * (me.zoom - 1);
-				me.pY = -me.offsetY * (me.zoom - 1);
-				me.ele.css({
-					"background-position": me.pX + "px " + me.pY + "px"
-				});
+				console.log(me.ele, me.settings)
+				$.fn.imageZoom.update(me.ele, me.settings);
 				me.zoomElement.val(me.zoom);
+				if (typeof me.settings.change === "function") {
+					me.settings.change.call(me, me);
+				}
+
 			};
+
+
 			me.ele.on("mousemove mousewheel", me.imageInteraction);
 			me.ele.on("dblclick", me.clickZoom);
 			me.zoomElement.on("click", me.setZoom);
